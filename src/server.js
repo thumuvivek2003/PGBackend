@@ -1,7 +1,9 @@
-require('dotenv').config();
-const app = require('./app');
-const connectDB = require('./config/database');
-const logger = require('./config/logger');
+import dotenv from "dotenv";
+import app from "./app.js";
+import connectDB from "./config/database.js";
+import logger from "./config/logger.js";
+
+dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
@@ -16,16 +18,16 @@ const server = app.listen(PORT, () => {
 });
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
+process.on("unhandledRejection", (err) => {
   logger.error(`Unhandled Rejection: ${err.message}`);
-  console.log('⚠️  Shutting down server due to unhandled promise rejection');
+  console.log("⚠️  Shutting down server due to unhandled promise rejection");
   server.close(() => process.exit(1));
 });
 
 // Handle SIGTERM
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM signal received: closing HTTP server');
+process.on("SIGTERM", () => {
+  logger.info("SIGTERM signal received: closing HTTP server");
   server.close(() => {
-    logger.info('HTTP server closed');
+    logger.info("HTTP server closed");
   });
 });

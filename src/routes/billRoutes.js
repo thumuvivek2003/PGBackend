@@ -1,25 +1,29 @@
-const express = require('express');
-const router = express.Router();
-const {
+import express from "express";
+import {
   getBills,
   getBill,
   createBill,
   updateBill,
-  deleteBill
-} = require('../controllers/billController');
-const { protect } = require('../middlewares/auth');
-const { validate } = require('../middlewares/validator');
-const { createBillSchema } = require('../validations/billValidation');
+  deleteBill,
+} from "../controllers/billController.js";
+import { protect } from "../middlewares/auth.js";
+import { validate } from "../middlewares/validator.js";
+import { createBillSchema } from "../validations/billValidation.js";
 
+const router = express.Router();
+
+// 🔒 Protect all bill routes
 router.use(protect);
 
-router.route('/')
+router
+  .route("/")
   .get(getBills)
   .post(validate(createBillSchema), createBill);
 
-router.route('/:id')
+router
+  .route("/:id")
   .get(getBill)
   .put(updateBill)
   .delete(deleteBill);
 
-module.exports = router;
+export default router;

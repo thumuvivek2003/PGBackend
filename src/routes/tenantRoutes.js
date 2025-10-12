@@ -1,25 +1,32 @@
-const express = require('express');
-const router = express.Router();
-const {
+import express from "express";
+import {
   getTenants,
   getTenant,
   createTenant,
   updateTenant,
-  deleteTenant
-} = require('../controllers/tenantController');
-const { protect } = require('../middlewares/auth');
-const { validate } = require('../middlewares/validator');
-const { createTenantSchema, updateTenantSchema } = require('../validations/tenantValidation');
+  deleteTenant,
+} from "../controllers/tenantController.js";
+import { protect } from "../middlewares/auth.js";
+import { validate } from "../middlewares/validator.js";
+import {
+  createTenantSchema,
+  updateTenantSchema,
+} from "../validations/tenantValidation.js";
 
+const router = express.Router();
+
+// 🔒 Protect all tenant routes
 router.use(protect);
 
-router.route('/')
+router
+  .route("/")
   .get(getTenants)
   .post(validate(createTenantSchema), createTenant);
 
-router.route('/:id')
+router
+  .route("/:id")
   .get(getTenant)
   .put(validate(updateTenantSchema), updateTenant)
   .delete(deleteTenant);
 
-module.exports = router;
+export default router;

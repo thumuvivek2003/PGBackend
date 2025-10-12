@@ -1,30 +1,30 @@
-const Joi = require('joi');
+import Joi from "joi";
 
-exports.registerSchema = Joi.object({
+export const registerSchema = Joi.object({
   name: Joi.string().required().trim().messages({
-    'any.required': 'Name is required',
-    'string.empty': 'Name cannot be empty'
+    "any.required": "Name is required",
+    "string.empty": "Name cannot be empty",
   }),
   email: Joi.string().email().required().trim().lowercase().messages({
-    'any.required': 'Email is required',
-    'string.email': 'Please provide a valid email'
+    "any.required": "Email is required",
+    "string.email": "Please provide a valid email",
   }),
   phone: Joi.string().required().trim().messages({
-    'any.required': 'Phone number is required'
+    "any.required": "Phone number is required",
   }),
   password: Joi.string().min(6).required().messages({
-    'any.required': 'Password is required',
-    'string.min': 'Password must be at least 6 characters long'
+    "any.required": "Password is required",
+    "string.min": "Password must be at least 6 characters long",
   }),
-  role: Joi.string().valid('owner', 'manager').default('owner')
+  role: Joi.string().valid("owner", "manager").default("owner"),
 });
 
-exports.loginSchema = Joi.object({
+export const loginSchema = Joi.object({
   email: Joi.string().email().required().trim().lowercase().messages({
-    'any.required': 'Email is required',
-    'string.email': 'Please provide a valid email'
+    "any.required": "Email is required",
+    "string.email": "Please provide a valid email",
   }),
   password: Joi.string().required().messages({
-    'any.required': 'Password is required'
-  })
+    "any.required": "Password is required",
+  }),
 });

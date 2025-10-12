@@ -1,8 +1,13 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const connectDB = async () => {
   try {
-    console.log('MONGO_URI from env:', process.env.MONGO_URI ? '✅ Loaded' : '❌ Undefined' ,  process.env.MONGO_URI);
+    console.log(
+      "MONGO_URI from env:",
+      process.env.MONGO_URI ? "✅ Loaded" : "❌ Undefined",
+      process.env.MONGO_URI
+    );
+
     const conn = await mongoose.connect(process.env.MONGO_URI);
 
     console.log(`✓ MongoDB Connected: ${conn.connection.host}`);
@@ -12,4 +17,4 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB;
+export default connectDB;

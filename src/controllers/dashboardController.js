@@ -1,9 +1,9 @@
-const asyncHandler = require("express-async-handler");
-const Room = require("../models/Room");
-const Tenant = require("../models/Tenant");
-const Fee = require("../models/Fee");
+import asyncHandler from "express-async-handler";
+import Room from "../models/Room.js";
+import Tenant from "../models/Tenant.js";
+import Fee from "../models/Fee.js";
 
-exports.getDashboardData = asyncHandler(async (req, res) => {
+export const getDashboardData = asyncHandler(async (req, res) => {
   // 1️⃣ Total rooms and vacant rooms
   const totalRooms = await Room.countDocuments();
   const vacantRoomsList = await Room.find({ status: "vacant" })
@@ -30,7 +30,12 @@ exports.getDashboardData = asyncHandler(async (req, res) => {
     .limit(5)
     .populate("tenant_id", "name")
     .lean();
-    console.log('*'.repeat(10),recentFees)
+  // console.log('*'.repeat(10), recentFees);
+
+  const occupancyRate =
+    totalRooms > 0
+      ? ((totalRooms - vacantRoomsList.length) / totalRooms) * 100
+      : 0;
 
   // 6️⃣ Respond with structured data
   res.status(200).json({
@@ -42,7 +47,7 @@ exports.getDashboardData = asyncHandler(async (req, res) => {
         totalTenants,
         pendingFees: pendingFees[0]?.total || 0,
         monthlyIncome: monthlyIncome[0]?.total || 0,
-        occupancyRate: ((totalRooms - vacantRoomsList.length) / totalRooms) * 100,
+        occupancyRate,
       },
       vacantRoomsList: vacantRoomsList.map((room) => ({
         room_no: room.room_no,

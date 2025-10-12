@@ -1,25 +1,32 @@
-const express = require('express');
-const router = express.Router();
-const {
+import express from "express";
+import {
   getRooms,
   getRoom,
   createRoom,
   updateRoom,
-  deleteRoom
-} = require('../controllers/roomController');
-const { protect } = require('../middlewares/auth');
-const { validate } = require('../middlewares/validator');
-const { createRoomSchema, updateRoomSchema } = require('../validations/roomValidation');
+  deleteRoom,
+} from "../controllers/roomController.js";
+import { protect } from "../middlewares/auth.js";
+import { validate } from "../middlewares/validator.js";
+import {
+  createRoomSchema,
+  updateRoomSchema,
+} from "../validations/roomValidation.js";
 
+const router = express.Router();
+
+// 🔒 Protect all room routes
 router.use(protect);
 
-router.route('/')
+router
+  .route("/")
   .get(getRooms)
   .post(validate(createRoomSchema), createRoom);
 
-router.route('/:id')
+router
+  .route("/:id")
   .get(getRoom)
   .put(validate(updateRoomSchema), updateRoom)
   .delete(deleteRoom);
 
-module.exports = router;
+export default router;

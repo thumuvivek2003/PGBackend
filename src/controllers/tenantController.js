@@ -1,43 +1,45 @@
-const Tenant = require('../models/Tenant');
-const Room = require('../models/Room');
-const { asyncHandler } = require('../middlewares/errorHandler');
+import Tenant from "../models/Tenant.js";
+import Room from "../models/Room.js";
+import { asyncHandler } from "../middlewares/errorHandler.js";
 
 // @desc    Get all tenants
 // @route   GET /api/tenants
 // @access  Private
-exports.getTenants = asyncHandler(async (req, res) => {
-  const tenants = await Tenant.find().populate('room_id', 'room_no type').lean();
+export const getTenants = asyncHandler(async (req, res) => {
+  const tenants = await Tenant.find()
+    .populate("room_id", "room_no type")
+    .lean();
 
   res.status(200).json({
     success: true,
     count: tenants.length,
-    data: tenants
+    data: tenants,
   });
 });
 
 // @desc    Get single tenant
 // @route   GET /api/tenants/:id
 // @access  Private
-exports.getTenant = asyncHandler(async (req, res) => {
-  const tenant = await Tenant.findById(req.params.id).populate('room_id');
+export const getTenant = asyncHandler(async (req, res) => {
+  const tenant = await Tenant.findById(req.params.id).populate("room_id");
 
   if (!tenant) {
     return res.status(404).json({
       success: false,
-      message: 'Tenant not found'
+      message: "Tenant not found",
     });
   }
 
   res.status(200).json({
     success: true,
-    data: tenant
+    data: tenant,
   });
 });
 
 // @desc    Create tenant
 // @route   POST /api/tenants
 // @access  Private
-exports.createTenant = asyncHandler(async (req, res) => {
+export const createTenant = asyncHandler(async (req, res) => {
   const { room_id } = req.body;
 
   // Check if room exists
@@ -45,7 +47,7 @@ exports.createTenant = asyncHandler(async (req, res) => {
   if (!room) {
     return res.status(404).json({
       success: false,
-      message: 'Room not found'
+      message: "Room not found",
     });
   }
 
@@ -53,7 +55,7 @@ exports.createTenant = asyncHandler(async (req, res) => {
   if (room.occupied_count >= room.capacity) {
     return res.status(400).json({
       success: false,
-      message: 'Room is full'
+      message: "Room is full",
     });
   }
 
@@ -65,21 +67,21 @@ exports.createTenant = asyncHandler(async (req, res) => {
 
   res.status(201).json({
     success: true,
-    message: 'Tenant created successfully',
-    data: tenant
+    message: "Tenant created successfully",
+    data: tenant,
   });
 });
 
 // @desc    Update tenant
 // @route   PUT /api/tenants/:id
 // @access  Private
-exports.updateTenant = asyncHandler(async (req, res) => {
+export const updateTenant = asyncHandler(async (req, res) => {
   let tenant = await Tenant.findById(req.params.id);
 
   if (!tenant) {
     return res.status(404).json({
       success: false,
-      message: 'Tenant not found'
+      message: "Tenant not found",
     });
   }
 
@@ -91,14 +93,14 @@ exports.updateTenant = asyncHandler(async (req, res) => {
     if (!newRoom) {
       return res.status(404).json({
         success: false,
-        message: 'New room not found'
+        message: "New room not found",
       });
     }
 
     if (newRoom.occupied_count >= newRoom.capacity) {
       return res.status(400).json({
         success: false,
-        message: 'New room is full'
+        message: "New room is full",
       });
     }
 
@@ -112,7 +114,7 @@ exports.updateTenant = asyncHandler(async (req, res) => {
   }
 
   // If tenant is leaving
-  if (req.body.status === 'left' && tenant.status === 'active') {
+  if (req.body.status === "left" && tenant.status === "active") {
     const room = await Room.findById(tenant.room_id);
     if (room) {
       room.occupied_count -= 1;
@@ -123,31 +125,31 @@ exports.updateTenant = asyncHandler(async (req, res) => {
 
   tenant = await Tenant.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
-    runValidators: true
+    runValidators: true,
   });
 
   res.status(200).json({
     success: true,
-    message: 'Tenant updated successfully',
-    data: tenant
+    message: "Tenant updated successfully",
+    data: tenant,
   });
 });
 
 // @desc    Delete tenant
 // @route   DELETE /api/tenants/:id
 // @access  Private
-exports.deleteTenant = asyncHandler(async (req, res) => {
+export const deleteTenant = asyncHandler(async (req, res) => {
   const tenant = await Tenant.findById(req.params.id);
 
   if (!tenant) {
     return res.status(404).json({
       success: false,
-      message: 'Tenant not found'
+      message: "Tenant not found",
     });
   }
 
   // Update room occupied count if tenant is active
-  if (tenant.status === 'active') {
+  if (tenant.status === "active") {
     const room = await Room.findById(tenant.room_id);
     if (room) {
       room.occupied_count -= 1;
@@ -159,7 +161,7 @@ exports.deleteTenant = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    message: 'Tenant deleted successfully',
-    data: {}
+    message: "Tenant deleted successfully",
+    data: {},
   });
 });
