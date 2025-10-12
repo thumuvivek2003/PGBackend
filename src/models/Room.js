@@ -5,7 +5,6 @@ const roomSchema = new mongoose.Schema(
     room_no: {
       type: String,
       required: [true, "Room number is required"],
-      unique: true,
       trim: true,
     },
     rent: {
@@ -40,7 +39,6 @@ const roomSchema = new mongoose.Schema(
     isDeleted: {
       type: Boolean,
       default: false,
-      index: true,
     },
     deletedAt: {
       type: Date,
@@ -52,9 +50,9 @@ const roomSchema = new mongoose.Schema(
 );
 
 // 📌 Indexes
-roomSchema.index({ room_no: 1 });
+roomSchema.index({ room_no: 1 }, { unique: true, partialFilterExpression: { isDeleted: false } });
 roomSchema.index({ status: 1 });
-roomSchema.index({ isDeleted: 1 }); // optional for faster queries
+roomSchema.index({ isDeleted: 1 });
 
 // 📌 Auto-update status based on occupied_count
 roomSchema.pre("save", function (next) {

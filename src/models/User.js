@@ -36,7 +36,6 @@ const userSchema = new mongoose.Schema(
     isDeleted: {
       type: Boolean,
       default: false,
-      index: true,
     },
     deletedAt: {
       type: Date,
@@ -83,7 +82,7 @@ userSchema.index(
   { email: 1 },
   { unique: true, partialFilterExpression: { isDeleted: false } }
 );
-userSchema.index({ phone: 1 });
+userSchema.index({ isDeleted: 1 });
 
 const User = mongoose.model("User", userSchema);
 export default User;
