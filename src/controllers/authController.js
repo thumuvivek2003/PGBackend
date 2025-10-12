@@ -15,7 +15,16 @@ exports.register = asyncHandler(async (req, res) => {
     role
   });
 
+  // Generate JWT token
   const token = user.getSignedJwtToken();
+
+  // Set token in HttpOnly cookie
+  res.cookie("accessToken", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // HTTPS only in prod
+    sameSite: "Strict", // CSRF protection
+    maxAge: 15 * 60 * 1000 // 15 minutes
+  });
 
   res.status(201).json({
     success: true,
@@ -26,8 +35,8 @@ exports.register = asyncHandler(async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role
-      },
-      token
+      }
+      // token removed from response for security
     }
   });
 });
@@ -41,22 +50,24 @@ exports.login = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email }).select('+password');
 
   if (!user) {
-    return res.status(401).json({
-      success: false,
-      message: 'Invalid credentials'
-    });
+    return res.status(401).json({ success: false, message: 'Invalid credentials' });
   }
 
   const isMatch = await user.comparePassword(password);
-
   if (!isMatch) {
-    return res.status(401).json({
-      success: false,
-      message: 'Invalid credentials'
-    });
+    return res.status(401).json({ success: false, message: 'Invalid credentials' });
   }
 
+  // Generate JWT token
   const token = user.getSignedJwtToken();
+
+  // Set token in HttpOnly cookie
+  res.cookie("accessToken", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+    maxAge: 15 * 60 * 1000
+  });
 
   res.status(200).json({
     success: true,
@@ -67,8 +78,8 @@ exports.login = asyncHandler(async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role
-      },
-      token
+      }
+      // token removed from response
     }
   });
 });

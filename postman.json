@@ -1,0 +1,242 @@
+{
+  "info": {
+    "_postman_id": "b7c4e8e0-4567-4e8d-bb65-f1f58b2c876a",
+    "name": "PG Management System",
+    "description": "Postman collection for testing all PG/Hostel Management APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Register Owner",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John PG\",\n  \"email\": \"owner@example.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login Owner",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"owner@example.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏠 Rooms",
+      "item": [
+        {
+          "name": "Create Room",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roomNumber\": \"101\",\n  \"capacity\": 3,\n  \"vacantBeds\": 1,\n  \"rent\": 5500\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/rooms",
+              "host": ["{{base_url}}"],
+              "path": ["api", "rooms"]
+            }
+          }
+        },
+        {
+          "name": "Get All Rooms",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/rooms",
+              "host": ["{{base_url}}"],
+              "path": ["api", "rooms"]
+            }
+          }
+        },
+        {
+          "name": "Update Room",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rent\": 6000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/rooms/101",
+              "host": ["{{base_url}}"],
+              "path": ["api", "rooms", "101"]
+            }
+          }
+        },
+        {
+          "name": "Delete Room",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/rooms/101",
+              "host": ["{{base_url}}"],
+              "path": ["api", "rooms", "101"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👥 Tenants",
+      "item": [
+        {
+          "name": "Add Tenant",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ravi Kumar\",\n  \"phone\": \"9876543210\",\n  \"roomNumber\": \"101\",\n  \"joinDate\": \"2025-10-01\",\n  \"advance\": 3000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tenants",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tenants"]
+            }
+          }
+        },
+        {
+          "name": "Get All Tenants",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tenants",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tenants"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💰 Fees & Payments",
+      "item": [
+        {
+          "name": "Record Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenantId\": \"{{tenant_id}}\",\n  \"amount\": 5500,\n  \"month\": \"October\",\n  \"status\": \"Paid\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments"]
+            }
+          }
+        },
+        {
+          "name": "Get Pending Fees",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/pending",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "pending"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "⚡ Bills & Utilities",
+      "item": [
+        {
+          "name": "Add Current Bill",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"month\": \"October\",\n  \"amount\": 3500,\n  \"dueDate\": \"2025-10-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/bills",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bills"]
+            }
+          }
+        },
+        {
+          "name": "Get All Bills",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/bills",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bills"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:5000" },
+    { "key": "token", "value": "" },
+    { "key": "tenant_id", "value": "" }
+  ]
+}
+    
