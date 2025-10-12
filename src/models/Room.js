@@ -37,6 +37,14 @@ const roomSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    deletedAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
@@ -46,6 +54,7 @@ const roomSchema = new mongoose.Schema(
 // 📌 Indexes
 roomSchema.index({ room_no: 1 });
 roomSchema.index({ status: 1 });
+roomSchema.index({ isDeleted: 1 }); // optional for faster queries
 
 // 📌 Auto-update status based on occupied_count
 roomSchema.pre("save", function (next) {

@@ -7,7 +7,7 @@ export const protect = asyncHandler(async (req, res, next) => {
   let token;
 
   if (
-    req.cookies.accessToken ||
+    req.cookies?.accessToken ||
     (req.headers.authorization && req.headers.authorization.startsWith("Bearer"))
   ) {
     token = req.headers.authorization.split(" ")[1];

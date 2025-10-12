@@ -102,24 +102,27 @@ export const updateFee = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Delete fee
+// @desc    Soft delete fee
 // @route   DELETE /api/fees/:id
 // @access  Private
 export const deleteFee = asyncHandler(async (req, res) => {
   const fee = await Fee.findById(req.params.id);
 
-  if (!fee) {
+  if (!fee || fee.isDeleted) {
     return res.status(404).json({
       success: false,
-      message: "Fee record not found",
+      message: "Fee record not found or already deleted",
     });
   }
 
-  await fee.deleteOne();
+  // 👇 Soft delete instead of hard delete
+  fee.isDeleted = true;
+  fee.deletedAt = new Date();
+  await fee.save({ validateBeforeSave: false });
 
   res.status(200).json({
     success: true,
-    message: "Fee record deleted successfully",
-    data: {},
+    message: "Fee record soft deleted successfully",
+    data: fee,
   });
 });

@@ -71,24 +71,27 @@ export const updateRoom = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Delete room
+// @desc    Soft delete room
 // @route   DELETE /api/rooms/:id
 // @access  Private
 export const deleteRoom = asyncHandler(async (req, res) => {
   const room = await Room.findById(req.params.id);
 
-  if (!room) {
+  if (!room || room.isDeleted) {
     return res.status(404).json({
       success: false,
-      message: "Room not found",
+      message: "Room not found or already deleted",
     });
   }
 
-  await room.deleteOne();
+  // 👇 Soft delete instead of hard delete
+  room.isDeleted = true;
+  room.deletedAt = new Date();
+  await room.save({ validateBeforeSave: false });
 
   res.status(200).json({
     success: true,
-    message: "Room deleted successfully",
-    data: {},
+    message: "Room soft deleted successfully",
+    data: room,
   });
 });

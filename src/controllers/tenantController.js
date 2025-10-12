@@ -135,33 +135,37 @@ export const updateTenant = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Delete tenant
+// @desc    Soft delete tenant
 // @route   DELETE /api/tenants/:id
 // @access  Private
 export const deleteTenant = asyncHandler(async (req, res) => {
   const tenant = await Tenant.findById(req.params.id);
 
-  if (!tenant) {
+  if (!tenant || tenant.isDeleted) {
     return res.status(404).json({
       success: false,
-      message: "Tenant not found",
+      message: "Tenant not found or already deleted",
     });
   }
 
-  // Update room occupied count if tenant is active
+  // ✅ Update room occupied count if tenant is active
   if (tenant.status === "active") {
     const room = await Room.findById(tenant.room_id);
     if (room) {
-      room.occupied_count -= 1;
+      room.occupied_count = Math.max(0, room.occupied_count - 1); // prevent negative
       await room.save();
     }
   }
 
-  await tenant.deleteOne();
+  // ✅ Soft delete tenant
+  tenant.isDeleted = true;
+  tenant.deletedAt = new Date();
+  await tenant.save({ validateBeforeSave: false });
 
   res.status(200).json({
     success: true,
-    message: "Tenant deleted successfully",
-    data: {},
+    message: "Tenant soft deleted successfully",
+    data: tenant,
   });
 });
+

@@ -35,6 +35,14 @@ const feeSchema = new mongoose.Schema(
     payment_date: {
       type: Date,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    deletedAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,

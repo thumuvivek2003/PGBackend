@@ -50,6 +50,14 @@ const tenantSchema = new mongoose.Schema(
       enum: ["active", "left"],
       default: "active",
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    deletedAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
@@ -60,6 +68,7 @@ const tenantSchema = new mongoose.Schema(
 tenantSchema.index({ room_id: 1 });
 tenantSchema.index({ status: 1 });
 tenantSchema.index({ phone: 1 });
+tenantSchema.index({ isDeleted: 1 }); // optional for faster filtering
 
 const Tenant = mongoose.model("Tenant", tenantSchema);
 

@@ -79,24 +79,28 @@ export const updateBill = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Delete bill
+// @desc    Soft delete bill
 // @route   DELETE /api/bills/:id
 // @access  Private
 export const deleteBill = asyncHandler(async (req, res) => {
   const bill = await Bill.findById(req.params.id);
 
-  if (!bill) {
+  if (!bill || bill.isDeleted) {
     return res.status(404).json({
       success: false,
-      message: "Bill not found",
+      message: "Bill not found or already deleted",
     });
   }
 
-  await bill.deleteOne();
+  // 👇 Soft delete instead of removing
+  bill.isDeleted = true;
+  bill.deletedAt = new Date();
+  await bill.save({ validateBeforeSave: false });
 
   res.status(200).json({
     success: true,
-    message: "Bill deleted successfully",
-    data: {},
+    message: "Bill soft deleted successfully",
+    data: bill,
   });
 });
+
