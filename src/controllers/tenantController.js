@@ -6,9 +6,13 @@ import { asyncHandler } from "../middlewares/errorHandler.js";
 // @route   GET /api/tenants
 // @access  Private
 export const getTenants = asyncHandler(async (req, res) => {
-  const tenants = await Tenant.find()
-    .populate("room_id", "room_no type")
+  let tenants = await Tenant.find()
+    .populate("room_id", "room_no type rent")
     .lean();
+  const order = { active: 0, left: 1 };
+  tenants.sort((a, b) => {
+    return (order[a.status] ?? 2) - (order[b.status] ?? 2);
+  });
 
   res.status(200).json({
     success: true,
