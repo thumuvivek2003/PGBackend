@@ -1,65 +1,17 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const roomSchema = new mongoose.Schema(
+const RoomSchema = new mongoose.Schema(
   {
-    room_no: {
-      type: String,
-      required: [true, "Room number is required"],
-      trim: true,
-    },
-    rent: {
-      type: Number,
-      required: [true, "Rent amount is required"],
-      min: 0,
-    },
-    capacity: {
-      type: Number,
-      required: [true, "Capacity is required"],
-      min: 1,
-    },
-    occupied_count: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    status: {
-      type: String,
-      enum: ["vacant", "occupied"],
-      default: "vacant",
-    },
-    type: {
-      type: String,
-      enum: ["single", "double", "triple"],
-      required: true,
-    },
-    remarks: {
-      type: String,
-      trim: true,
-    },
-    isDeleted: {
-      type: Boolean,
-      default: false,
-    },
-    deletedAt: {
-      type: Date,
-    },
+    no: { type: String, required: true, trim: true },
+    pgId: { type: mongoose.Schema.Types.ObjectId, ref: 'Pg', required: true },
+    capacity: { type: Number, default: 1, min: 1 },
+    floor: { type: Number, default: 0 },
+    status: { type: String, enum: ['active', 'maintenance'], default: 'active' },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true, versionKey: false }
 );
 
-// 📌 Indexes
-roomSchema.index({ room_no: 1 }, { unique: true, partialFilterExpression: { isDeleted: false } });
-roomSchema.index({ status: 1 });
-roomSchema.index({ isDeleted: 1 });
+// Room number unique within a PG
+RoomSchema.index({ pgId: 1, no: 1 }, { unique: true });
 
-// 📌 Auto-update status based on occupied_count
-roomSchema.pre("save", function (next) {
-  this.status = this.occupied_count >= this.capacity ? "occupied" : "vacant";
-  next();
-});
-
-const Room = mongoose.model("Room", roomSchema);
-
-export default Room;
+export default mongoose.model('Room', RoomSchema);

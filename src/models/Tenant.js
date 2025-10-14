@@ -1,74 +1,30 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const tenantSchema = new mongoose.Schema(
+const TenantSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: [true, "Tenant name is required"],
-      trim: true,
-    },
-    phone: {
-      type: String,
-      required: [true, "Phone number is required"],
-      trim: true,
-    },
-    email: {
-      type: String,
-      trim: true,
-      lowercase: true,
-      match: [/^\S+@\S+\.\S+$/, "Please provide a valid email"],
-    },
-    address: {
-      type: String,
-      trim: true,
-    },
-    room_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Room",
-      required: [true, "Room ID is required"],
-    },
-    join_date: {
-      type: Date,
-      required: [true, "Join date is required"],
-      default: Date.now,
-    },
-    leave_date: {
-      type: Date,
-    },
-    advance_amount: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    id_docs: [
-      {
-        type: String,
-      },
-    ],
-    status: {
-      type: String,
-      enum: ["active", "left"],
-      default: "active",
-    },
-    isDeleted: {
-      type: Boolean,
-      default: false,
-    },
-    deletedAt: {
-      type: Date,
-    },
+    name: { type: String, required: true, trim: true },
+    mobile: { type: String, required: true, trim: true },
+    email: { type: String, trim: true, lowercase: true },
+    home_mobile: { type: String, trim: true },
+    address: { type: String, trim: true },
+    join_date: { type: Date },
+    advance: { type: Number, default: 0 },
+
+    // keep for convenience; prefer Occupancies for history
+    bedId: { type: mongoose.Schema.Types.ObjectId, ref: 'Bed' },
+
+    active: { type: Boolean, default: true },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true, versionKey: false }
 );
 
-// 📌 Indexes
-tenantSchema.index({ room_id: 1 });
-tenantSchema.index({ status: 1 });
-tenantSchema.index({ phone: 1 });
-tenantSchema.index({ isDeleted: 1 }); // optional for faster filtering
+// Unique email when present
+TenantSchema.index(
+  { email: 1 },
+  { unique: true, partialFilterExpression: { email: { $type: 'string' } } }
+);
 
-const Tenant = mongoose.model("Tenant", tenantSchema);
+// Search helpers
+TenantSchema.index({ name: 'text', mobile: 'text', email: 'text' });
 
-export default Tenant;
+export default mongoose.model('Tenant', TenantSchema);
