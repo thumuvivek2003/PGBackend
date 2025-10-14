@@ -1,0 +1,71 @@
+PGs {
+  _id,
+  pgName,
+  user_id,
+  address,
+  location,
+  contact,
+  createdAt
+}
+
+Rooms {
+  _id,
+  no,
+  pgId,
+  capacity,
+  floor,
+  status, // 'active' | 'maintenance'
+}
+
+Beds {
+  _id,
+  roomId,
+  bedNo,
+  notes,
+  defaultCost,
+  isOccupied // boolean
+}
+
+Tenants {
+  _id,
+  name,
+  mobile,
+  email,
+  home_mobile,
+  address,
+  join_date,
+  advance,
+  bedId,
+  docs: [docId],
+  active // boolean
+}
+
+Bills {
+  _id,
+  bedId,
+  tenantId,
+  from,
+  to,
+  amount,
+  status, // 'pending' | 'partial' | 'paid'
+  remarks,
+  transactions: [tId]
+}
+
+Transactions {
+  tId,
+  billId,
+  method, // 'cash' | 'upi' | 'bank' etc.
+  screenshot,
+  notes,
+  dateTime,
+  amount
+}
+
+Documents {
+  docId,
+  file_name,
+  file_path,
+  type, // 'aadhar', 'agreement', etc.
+  uploadedAt
+}
